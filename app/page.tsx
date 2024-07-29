@@ -1,113 +1,141 @@
-import Image from "next/image";
+'use client'
+import Image from 'next/image'
+
+import { useEffect, useState } from 'react';
+
+function DataCell({ name, data }) {
+	return (
+		<div className=' flex flex-row border justify-between border-white text-2xl py-10 w-72 px-5'>
+			<div>{name}:</div>
+			<div>{data}</div>
+		</div>
+	)
+}
+
+function HeadingDisplay({ heading, size1 = 500, size2 = 300, dataTime, retry_con }) {
+	let des = (heading - (Math.floor(heading))) * 360
+	const [status_color, setStatusColor] = useState("Red")
+
+	useEffect(() => {
+		const intervalId = setInterval(() => {
+			if (Date.now() - dataTime < 1000) {
+				setStatusColor("Green")
+			} else {
+				setStatusColor("Red")
+				retry_con()
+			}
+		}, 250)
+		return () => clearInterval(intervalId);
+	}, [dataTime, setStatusColor])
+
+	return (
+		<div className=' inline-grid justify-items-center items-center'>
+			<div className='flex flex-col h-full col-span-full row-span-full justify-items-start items-start'>
+				<div className=' w-12 h-9 border-4 rounded-md border-white -mt-3' />
+				<div className=' h-full flex-grow' />
+			</div>
+			<div className='flex flex-col h-full col-span-full row-span-full justify-items-start items-start'>
+				<div className=' text-white text-5xl mt-36'>
+					^
+				</div>
+				<div className=' h-full flex-grow' />
+			</div>
+			<Image
+				src="/gyro_36.png"
+				width={size1}
+				height={size1}
+				alt="Picture of the author"
+				style={{ transform: `rotate(${heading * -1}deg)` }}
+				className=' origin-center col-span-full row-span-full'
+			/>
+			<Image
+				src="/gyro_10.png"
+				width={size2}
+				height={size2}
+				alt="Picture of the author"
+				style={{ transform: `rotate(${des * -1}deg)` }}
+				// className='origin-center absolute z-20 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'
+				className=' origin-center col-span-full row-span-full'
+			/>
+			<div className='col-span-full text-white text-4xl row-span-full'
+				style={{ color: `${status_color}` }}
+			>
+				{("00" + Math.floor(heading)).slice(-3)}
+			</div>
+		</div>
+	)
+}
 
 export default function Home() {
-  return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:size-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
+	const [rawData, setRawData] = useState("")
+	const [dataTime, setDataTime] = useState(0)
+	const [data, setData] = useState({
+		heading: 0,
+		lat: 0,
+		lon: 0,
+		alt: 0,
+		roll: 0,
+		pitch: 0,
+		stw: 0,
+		sog: 0,
+		dpt: 0,
+		day: 0,
+		month: 0,
+		year: 0,
+		local_min: 0,
+		local_hour: 0,
+		milliseconds: 0,
+		relative_wind_speed: 0,
+		relative_wind_angle: 0,
+	});
+	let ws;
 
-      <div className="relative z-[-1] flex place-items-center before:absolute before:h-[300px] before:w-full before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 sm:before:w-[480px] sm:after:w-[240px] before:lg:h-[360px]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
+	useEffect(() => {
+		retry_con()
+	}, [])
 
-      <div className="mb-32 grid text-center lg:mb-0 lg:w-full lg:max-w-5xl lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Docs{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
 
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Learn{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
+	function retry_con() {
+		ws = new WebSocket('ws://localhost:9999');
 
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Templates{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Explore starter templates for Next.js.
-          </p>
-        </a>
+		ws.onmessage = (event) => {
+			const newData = JSON.parse(event.data);
+			setRawData(event.data)
+			setData(newData);
+			setDataTime(Date.now())
+		};
+	}
 
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Deploy{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-balance text-sm opacity-50">
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  );
+
+	return (
+		<div className='flex flex-row p-10 justify-between bg-slate-800 h-screen text-white'>
+			<div className='flex flex-col flex-grow space-y-20'>
+				<div className=' text-sm'>
+					raw data:
+					{rawData}
+				</div>
+				<div className='self-center justify-self-center flex-grow' onClick={() => retry_con()}>
+					<HeadingDisplay heading={data.heading} size2={350} dataTime={dataTime} retry_con={retry_con}/>
+				</div>
+			</div>
+			<div className='flex flex-row space-x-5'>
+
+				<div className='flex flex-col space-y-5'>
+					<DataCell name="Heading" data={data.heading} />
+					<DataCell name="Pitch" data={data.pitch} />
+					<DataCell name="Roll" data={data.roll} />
+					<DataCell name="Latitude" data={data.lat} />
+					<DataCell name="Longtitude" data={data.lon} />
+					<DataCell name="Altitude" data={data.alt} />
+				</div>
+				<div className='flex flex-col space-y-5'>
+					<DataCell name="Water Speed" data={data.stw} />
+					<DataCell name="Ground Speed" data={data.sog} />
+					<DataCell name="Depth" data={data.dpt} />
+					<DataCell name="Wind Speed(R)" data={data.relative_wind_speed} />
+					<DataCell name="Wind Angle(R)" data={data.relative_wind_angle} />
+				</div>
+			</div>
+		</div>
+	);
 }

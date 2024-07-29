@@ -1,0 +1,10 @@
+<RCC>
+  <qresource prefix="images">
+    <file>pitch-white.png</file>
+    <file>roll-white.png</file>
+    <file>kindpng_4192117-white.png</file>
+    <file>hand_white.png</file>
+    <file>hand_black.png</file>
+    <file>kindpng_4192117.png</file>
+  </qresource>
+</RCC>
