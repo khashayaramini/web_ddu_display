@@ -5,14 +5,14 @@ import { useEffect, useState } from 'react';
 
 function DataCell({ name, data }) {
 	return (
-		<div className=' flex flex-row border justify-between border-white text-2xl py-10 w-72 px-5'>
+		<div className=' flex flex-row border justify-between border-white text-2xl py-5 w-72 px-5'>
 			<div>{name}:</div>
 			<div>{data}</div>
 		</div>
 	)
 }
 
-function HeadingDisplay({ heading, size1 = 500, size2 = 300, dataTime, retry_con }) {
+function HeadingDisplay({ heading, size1 = 800, size2 = 550, dataTime, retry_con }) {
 	let des = (heading - (Math.floor(heading))) * 360
 	const [status_color, setStatusColor] = useState("Red")
 
@@ -31,11 +31,11 @@ function HeadingDisplay({ heading, size1 = 500, size2 = 300, dataTime, retry_con
 	return (
 		<div className=' inline-grid justify-items-center items-center'>
 			<div className='flex flex-col h-full col-span-full row-span-full justify-items-start items-start'>
-				<div className=' w-12 h-9 border-4 rounded-md border-white -mt-3' />
+				<div className=' w-16 h-12 border-4 rounded-md border-white -mt-3' />
 				<div className=' h-full flex-grow' />
 			</div>
 			<div className='flex flex-col h-full col-span-full row-span-full justify-items-start items-start'>
-				<div className=' text-white text-5xl mt-36'>
+				<div className=' text-white text-7xl font-extrabold mt-56'>
 					^
 				</div>
 				<div className=' h-full flex-grow' />
@@ -54,19 +54,18 @@ function HeadingDisplay({ heading, size1 = 500, size2 = 300, dataTime, retry_con
 				height={size2}
 				alt="Picture of the author"
 				style={{ transform: `rotate(${des * -1}deg)` }}
-				// className='origin-center absolute z-20 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'
 				className=' origin-center col-span-full row-span-full'
 			/>
-			<div className='col-span-full text-white text-4xl row-span-full'
+			<div className='col-span-full text-white text-8xl font-extrabold row-span-full'
 				style={{ color: `${status_color}` }}
 			>
-				{("00" + Math.floor(heading)).slice(-3) + "." + Math.floor(des * 10)}
+				{("00" + Math.floor(heading)).slice(-3) + "." + Math.floor(des / 36)}
 			</div>
 		</div>
 	)
 }
 
-export default function Home() {
+export default function Gyro() {
 	const [rawData, setRawData] = useState("")
 	const [dataTime, setDataTime] = useState(0)
 	const [data, setData] = useState({
@@ -94,6 +93,12 @@ export default function Home() {
 		retry_con()
 	}, [])
 
+	const [h, setH] = useState(0)
+
+	useEffect(() => {
+		setH(h + 0.00005)
+	}, [h])
+
 
 	function retry_con() {
 		ws = new WebSocket('ws://localhost:9999');
@@ -109,31 +114,50 @@ export default function Home() {
 
 	return (
 		<div className='flex flex-row p-10 justify-between bg-slate-800 h-screen text-white'>
+			<div className='flex flex-col space-y-5 pr-5 border-r border-white'>
+				<div className='space-y-2 px-5 py-3'>
+					<div className=' text-xl'>Time</div>
+					<div className=' text-4xl'>{(new Date(Date.now())).toUTCString().slice(17, 25)}</div>
+					<div className=' text-4xl'>{(new Date(Date.now())).toUTCString().slice(5, 17)}</div>
+				</div>
+				<div className=' h-px w-full bg-white' />
+				<div className='space-y-2 px-5 py-3'>
+					<div className=' text-xl'>Posision</div>
+					<div className=' text-4xl'>{"36"}&deg;{"50.184'N"}</div>
+					<div className=' text-4xl'>{"028"}&deg;{"23.178'E"}</div>
+				</div>
+			</div>
 			<div className='flex flex-col flex-grow space-y-20'>
 				<div className=' text-sm'>
 					raw data:
 					{rawData}
 				</div>
 				<div className='self-center justify-self-center flex-grow' onClick={() => retry_con()}>
-					<HeadingDisplay heading={data.heading} size2={350} dataTime={dataTime} retry_con={retry_con}/>
+					{/* <HeadingDisplay heading={data.heading} dataTime={dataTime} retry_con={retry_con}/> */}
+					<HeadingDisplay heading={h} dataTime={dataTime} retry_con={retry_con} />
 				</div>
 			</div>
-			<div className='flex flex-row space-x-5'>
-
-				<div className='flex flex-col space-y-5'>
-					<DataCell name="Heading" data={data.heading} />
-					<DataCell name="Pitch" data={data.pitch} />
-					<DataCell name="Roll" data={data.roll} />
-					<DataCell name="Latitude" data={data.lat} />
-					<DataCell name="Longtitude" data={data.lon} />
-					<DataCell name="Altitude" data={data.alt} />
+			<div className='flex flex-col w-72 space-y-5 pl-5 border-l border-white'>
+				<div className='space-y-2 pl-5 py-3'>
+					<div className=' flex justify-between flex-row'>
+						<div className=' text-xl'>Pitch</div>
+						<div className=' text-4xl'>{data.pitch.toFixed(1)}&deg;</div>
+					</div>
+					<div className=' flex justify-between flex-row'>
+						<div className=' text-xl'>Pitch Rate</div>
+						<div className=' text-4xl'>{data.pitch.toFixed(1)}&deg;</div>
+					</div>
 				</div>
-				<div className='flex flex-col space-y-5'>
-					<DataCell name="Water Speed" data={data.stw} />
-					<DataCell name="Ground Speed" data={data.sog} />
-					<DataCell name="Depth" data={data.dpt} />
-					<DataCell name="Wind Speed(R)" data={data.relative_wind_speed} />
-					<DataCell name="Wind Angle(R)" data={data.relative_wind_angle} />
+				<div className=' h-px w-full bg-white' />
+				<div className='space-y-2 pl-5 py-3'>
+					<div className=' flex justify-between flex-row'>
+						<div className=' text-xl'>Roll</div>
+						<div className=' text-4xl'>{data.roll.toFixed(1)}&deg;</div>
+					</div>
+					<div className=' flex justify-between flex-row'>
+						<div className=' text-xl'>Roll Rate</div>
+						<div className=' text-4xl'>{data.roll.toFixed(1)}&deg;</div>
+					</div>
 				</div>
 			</div>
 		</div>
