@@ -60,7 +60,7 @@ function HeadingDisplay({ heading, size1 = 800, size2 = 550, dataTime, retry_con
 			<div className='col-span-full text-white text-8xl font-extrabold row-span-full'
 				style={{ color: `${status_color}` }}
 			>
-				{("00" + Math.floor(heading)).slice(-3) + "." + Math.floor(des / 36)}
+				{("00" + Math.floor(heading % 360)).slice(-3) + "." + Math.floor(des / 36)}
 			</div>
 		</div>
 	)

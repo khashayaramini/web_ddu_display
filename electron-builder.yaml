@@ -1,5 +1,5 @@
 appId: "ddu_display"
-productName: "DDU Display"
+productName: "ddu_display"
 win:
   # target: ["dir", "portable", "zip"]
   target: ["portable"]
