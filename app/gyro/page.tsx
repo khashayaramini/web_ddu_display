@@ -113,53 +113,61 @@ export default function Gyro() {
 
 
 	return (
-		<div className='flex flex-row p-10 justify-between bg-slate-800 h-screen text-white'>
-			<div className='flex flex-col space-y-5 pr-5 border-r border-white'>
-				<div className='space-y-2 px-5 py-3'>
-					<div className=' text-xl'>Time</div>
-					<div className=' text-4xl'>{(new Date(Date.now())).toUTCString().slice(17, 25)}</div>
-					<div className=' text-4xl'>{(new Date(Date.now())).toUTCString().slice(5, 17)}</div>
+		<div className='flex flex-col p-10 justify-between bg-slate-800 h-screen text-white' suppressHydrationWarning>
+			<div className='flex flex-row justify-between'>
+				<div className='flex flex-col space-y-5 pr-5 border-r border-white'>
+					<div className='space-y-2 px-5 py-3'>
+						<div className=' text-xl'>Time</div>
+						<div className=' text-4xl'>{(new Date(Date.now())).toUTCString().slice(17, 25)}</div>
+						<div className=' text-4xl'>{(new Date(Date.now())).toUTCString().slice(5, 17)}</div>
+					</div>
+					<div className=' h-px w-full bg-white' />
+					<div className='space-y-2 px-5 py-3'>
+						<div className=' text-xl'>Posision</div>
+						<div className=' text-4xl'>{"36"}&deg;{"50.184'N"}</div>
+						<div className=' text-4xl'>{"028"}&deg;{"23.178'E"}</div>
+					</div>
 				</div>
-				<div className=' h-px w-full bg-white' />
-				<div className='space-y-2 px-5 py-3'>
-					<div className=' text-xl'>Posision</div>
-					<div className=' text-4xl'>{"36"}&deg;{"50.184'N"}</div>
-					<div className=' text-4xl'>{"028"}&deg;{"23.178'E"}</div>
+				<div className='flex flex-col flex-grow space-y-20'>
+					<div className=' text-sm'>
+						raw data:
+						{rawData}
+					</div>
+					<div className='self-center justify-self-center flex-grow' onClick={() => retry_con()}>
+						{/* <HeadingDisplay heading={data.heading} dataTime={dataTime} retry_con={retry_con}/> */}
+						<HeadingDisplay heading={h} dataTime={dataTime} retry_con={retry_con} />
+					</div>
+				</div>
+				<div className='flex flex-col w-72 space-y-5 pl-5 border-l border-white'>
+					<div className='space-y-2 pl-5 py-3'>
+						<div className=' flex justify-between flex-row'>
+							<div className=' text-xl'>Pitch</div>
+							<div className=' text-4xl'>{(Math.round(data.pitch * 100) / 100).toFixed(1)}&deg;</div>
+						</div>
+						<div className=' flex justify-between flex-row'>
+							<div className=' text-xl'>Pitch Rate</div>
+							<div className=' text-4xl'>{(Math.round(data.pitch * 100) / 100).toFixed(1)}&deg;</div>
+							{/* <div className=' text-4xl'>{data.pitch.toFixed(1)}&deg;</div> */}
+						</div>
+					</div>
+					<div className=' h-px w-full bg-white' />
+					<div className='space-y-2 pl-5 py-3'>
+						<div className=' flex justify-between flex-row'>
+							<div className=' text-xl'>Roll</div>
+							<div className=' text-4xl'>{(Math.round(data.roll * 100) / 100).toFixed(1)}&deg;</div>
+							{/* <div className=' text-4xl'>{data.roll.toFixed(1)}&deg;</div> */}
+						</div>
+						<div className=' flex justify-between flex-row'>
+							<div className=' text-xl'>Roll Rate</div>
+							<div className=' text-4xl'>{(Math.round(data.roll * 100) / 100).toFixed(1)}&deg;</div>
+							{/* <div className=' text-4xl'>{data.roll.toFixed(1)}&deg;</div> */}
+						</div>
+					</div>
 				</div>
 			</div>
-			<div className='flex flex-col flex-grow space-y-20'>
-				<div className=' text-sm'>
-					raw data:
-					{rawData}
-				</div>
-				<div className='self-center justify-self-center flex-grow' onClick={() => retry_con()}>
-					{/* <HeadingDisplay heading={data.heading} dataTime={dataTime} retry_con={retry_con}/> */}
-					<HeadingDisplay heading={h} dataTime={dataTime} retry_con={retry_con} />
-				</div>
-			</div>
-			<div className='flex flex-col w-72 space-y-5 pl-5 border-l border-white'>
-				<div className='space-y-2 pl-5 py-3'>
-					<div className=' flex justify-between flex-row'>
-						<div className=' text-xl'>Pitch</div>
-						<div className=' text-4xl'>{data.pitch.toFixed(1)}&deg;</div>
-					</div>
-					<div className=' flex justify-between flex-row'>
-						<div className=' text-xl'>Pitch Rate</div>
-						<div className=' text-4xl'>{data.pitch.toFixed(1)}&deg;</div>
-					</div>
-				</div>
-				<div className=' h-px w-full bg-white' />
-				<div className='space-y-2 pl-5 py-3'>
-					<div className=' flex justify-between flex-row'>
-						<div className=' text-xl'>Roll</div>
-						<div className=' text-4xl'>{data.roll.toFixed(1)}&deg;</div>
-					</div>
-					<div className=' flex justify-between flex-row'>
-						<div className=' text-xl'>Roll Rate</div>
-						<div className=' text-4xl'>{data.roll.toFixed(1)}&deg;</div>
-					</div>
-				</div>
-			</div>
+			<button className=' px-5 py-3 rounded bg-slate-500 w-fit' onClick={()=>{window.location.href = "/";}}>
+				Main Display
+			</button>
 		</div>
 	);
 }

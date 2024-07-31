@@ -1,0 +1,13 @@
+appId: "ddu_display"
+productName: "DDU Display"
+win:
+  # target: ["dir", "portable", "zip"]
+  target: ["portable"]
+  icon: "resources/icon.ico"
+linux:
+  # target: ["dir", "appimage", "zip"]
+  target: ["appimage"]
+  icon: "resources/icon.png"
+# mac:
+#   target: ["dir", "dmg", "zip"]
+#   icon: "resources/icon.icns"

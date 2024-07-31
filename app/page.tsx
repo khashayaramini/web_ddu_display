@@ -1,5 +1,6 @@
 'use client'
 import Image from 'next/image'
+import { useRouter } from "next/navigation";
 
 import { useEffect, useState } from 'react';
 
@@ -12,7 +13,7 @@ function DataCell({ name, data }) {
 	)
 }
 
-function HeadingDisplay({ heading, size1 = 500, size2 = 300, dataTime, retry_con }) {
+function HeadingDisplay({ heading, size1 = 800, size2 = 550, dataTime, retry_con }) {
 	let des = (heading - (Math.floor(heading))) * 360
 	const [status_color, setStatusColor] = useState("Red")
 
@@ -31,11 +32,11 @@ function HeadingDisplay({ heading, size1 = 500, size2 = 300, dataTime, retry_con
 	return (
 		<div className=' inline-grid justify-items-center items-center'>
 			<div className='flex flex-col h-full col-span-full row-span-full justify-items-start items-start'>
-				<div className=' w-12 h-9 border-4 rounded-md border-white -mt-3' />
+				<div className=' w-16 h-12 border-4 rounded-md border-white -mt-3' />
 				<div className=' h-full flex-grow' />
 			</div>
 			<div className='flex flex-col h-full col-span-full row-span-full justify-items-start items-start'>
-				<div className=' text-white text-5xl mt-36'>
+				<div className=' text-white text-7xl font-extrabold mt-56'>
 					^
 				</div>
 				<div className=' h-full flex-grow' />
@@ -54,13 +55,12 @@ function HeadingDisplay({ heading, size1 = 500, size2 = 300, dataTime, retry_con
 				height={size2}
 				alt="Picture of the author"
 				style={{ transform: `rotate(${des * -1}deg)` }}
-				// className='origin-center absolute z-20 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'
 				className=' origin-center col-span-full row-span-full'
 			/>
-			<div className='col-span-full text-white text-4xl row-span-full'
+			<div className='col-span-full text-white text-8xl font-extrabold row-span-full'
 				style={{ color: `${status_color}` }}
 			>
-				{("00" + Math.floor(heading)).slice(-3) + "." + Math.floor(des * 10)}
+				{("00" + Math.floor(heading)).slice(-3) + "." + Math.floor(des / 36)}
 			</div>
 		</div>
 	)
@@ -90,6 +90,8 @@ export default function Home() {
 	});
 	let ws;
 
+	const router = useRouter()
+
 	useEffect(() => {
 		retry_con()
 	}, [])
@@ -108,34 +110,40 @@ export default function Home() {
 
 
 	return (
-		<div className='flex flex-row p-10 justify-between bg-slate-800 h-screen text-white'>
-			<div className='flex flex-col flex-grow space-y-20'>
-				<div className=' text-sm'>
-					raw data:
-					{rawData}
-				</div>
-				<div className='self-center justify-self-center flex-grow' onClick={() => retry_con()}>
-					<HeadingDisplay heading={data.heading} size2={350} dataTime={dataTime} retry_con={retry_con}/>
-				</div>
-			</div>
-			<div className='flex flex-row space-x-5'>
+		<div className='flex flex-col p-10 justify-between bg-slate-800 h-screen text-white'>
+			<div className='flex flex-row justify-between'>
 
-				<div className='flex flex-col space-y-5'>
-					<DataCell name="Heading" data={data.heading} />
-					<DataCell name="Pitch" data={data.pitch} />
-					<DataCell name="Roll" data={data.roll} />
-					<DataCell name="Latitude" data={data.lat} />
-					<DataCell name="Longtitude" data={data.lon} />
-					<DataCell name="Altitude" data={data.alt} />
+				<div className='flex flex-col flex-grow space-y-20'>
+					<div className=' text-sm'>
+						raw data:
+						{rawData}
+					</div>
+					<div className='self-center justify-self-center flex-grow' onClick={() => retry_con()}>
+						<HeadingDisplay heading={data.heading} dataTime={dataTime} retry_con={retry_con} />
+					</div>
 				</div>
-				<div className='flex flex-col space-y-5'>
-					<DataCell name="Water Speed" data={data.stw} />
-					<DataCell name="Ground Speed" data={data.sog} />
-					<DataCell name="Depth" data={data.dpt} />
-					<DataCell name="Wind Speed(R)" data={data.relative_wind_speed} />
-					<DataCell name="Wind Angle(R)" data={data.relative_wind_angle} />
+				<div className='flex flex-row space-x-5'>
+
+					<div className='flex flex-col space-y-5'>
+						<DataCell name="Heading" data={data.heading} />
+						<DataCell name="Pitch" data={data.pitch} />
+						<DataCell name="Roll" data={data.roll} />
+						<DataCell name="Latitude" data={data.lat} />
+						<DataCell name="Longtitude" data={data.lon} />
+						<DataCell name="Altitude" data={data.alt} />
+					</div>
+					<div className='flex flex-col space-y-5'>
+						<DataCell name="Water Speed" data={data.stw} />
+						<DataCell name="Ground Speed" data={data.sog} />
+						<DataCell name="Depth" data={data.dpt} />
+						<DataCell name="Wind Speed(R)" data={data.relative_wind_speed} />
+						<DataCell name="Wind Angle(R)" data={data.relative_wind_angle} />
+					</div>
 				</div>
 			</div>
+			<button className=' px-5 py-3 rounded bg-slate-500 w-fit' onClick={()=>{router.push("/gyro")}}>
+				Gyro Display
+			</button>
 		</div>
 	);
 }
