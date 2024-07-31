@@ -46,7 +46,7 @@ function HeadingDisplay({ heading, size1 = 800, size2 = 550, dataTime, retry_con
 				width={size1}
 				height={size1}
 				alt="Picture of the author"
-				style={{ transform: `rotate(${heading * -1}deg)` }}
+				style={{ transform: `rotate(${(heading % 360) * -1}deg)` }}
 				className=' origin-center col-span-full row-span-full'
 			/>
 			<Image
