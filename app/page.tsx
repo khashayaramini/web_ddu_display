@@ -141,9 +141,15 @@ export default function Home() {
 					</div>
 				</div>
 			</div>
-			<button className=' px-5 py-3 rounded bg-slate-500 w-fit' onClick={()=>{router.push("/gyro")}}>
-				Gyro Display
-			</button>
+			<div className=' flex flex-row space-x-5'>
+
+				<button className=' px-5 py-3 rounded bg-slate-500 w-fit' onClick={() => { router.push("/gyro") }}>
+					Gyro Display
+				</button>
+				<button className=' px-5 py-3 rounded bg-slate-500 w-fit' onClick={() => { router.push("/status") }}>
+					Status Display
+				</button>
+			</div>
 		</div>
 	);
 }
